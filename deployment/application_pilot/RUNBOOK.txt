@@ -1,0 +1,94 @@
+Prepared application-body qualification — 2026-10-21
+
+Purpose
+Collect exact unshaped HTTP request/response bodies from real ONOS CT/CA,
+alongside signed TLS/ICMP/cleanup evidence. Engineering qualification only.
+This is NOT a complete 15-intent paper experiment or a live shaping evaluation.
+No Bedrock access or credentials are needed for this stage.
+
+Tomorrow, from the project directory:
+  .venv/bin/python scripts/start_prepared_application.py
+  .venv/bin/python scripts/start_prepared_application.py --run
+
+The first command is local inspection. The second connects only to T4 using
+the existing pinned-host connector and starts a systemd service remotely.
+The manifest rejects changes to prepared source before SSH. The window starts
+at launch (90 minutes by default; permitted 30..120), with a hard deadline.
+The service runs independently of this computer and SSH. No automatic restart
+or automatic retry of a failed batch is configured for this protocol.
+Deployment does not change the EC2 state, network security groups, or other hosts.
+No new EC2 instance, model invocation, image pull or package installation is
+requested by this launcher. Existing Docker images and sudo Docker are needed.
+
+Planned collection
+Two independent fresh-controller batches: four_ring then two_switch, 18 runs
+each (I01/I02/I15 pilot operations x q=1/2/4 x 2 repetitions).
+One batch at a time: ONOS <=2 CPU/6GiB, Mininet <=2 CPU/4GiB, plus supervisor.
+The first batch must pass signatures, hashes, zero capture drops, ICMP checks,
+cleanup and unchanged host-network checks before the second can be accepted.
+The supervisor refuses foreign active workloads and waits for a quiet window;
+new foreign workloads interrupt owned work. It does not stop another project.
+If T4 is busy this can expire without collecting data; that is reported as
+waiting/deadline_reached, never silently counted as success.
+
+Records / recovery
+outputs/overnight_queue_latest.json contains the remote directory and unit after
+actual deployment. Keep that receipt. Read status with:
+  python3 scripts/overnight_status.py
+On T4: systemctl status <unit> ; journalctl -u <unit>
+Remote checkpoint.json retains verified batches and every attempted batch.
+Each successful batch has results.tar.gz and verification.log. Failed attempts
+are retained. Download archives before repurposing/stopping the instance;
+validate hashes locally. No automatic EC2 stop/termination is performed.
+To stop only this queue: sudo systemctl stop <unit-from-receipt>
+Do not use global mn -c, Docker pruning, firewall edits or appId-wide deletes.
+An uncertain cleanup or capture failure blocks progression and requires review.
+
+Application capture
+Per-run private directory mode0700, body/manifest files0600, max64MiB body bytes
+and4096 exchanges per run. Bodies may contain topology/host details; retain as
+private scientific inputs. Authorization headers and environment secrets are
+not supplied to the recorder. Failed quota/disk/observer operations make the
+run incomplete; a completed mutation is never replayed to repair logging.
+The callback buffers at most64MiB in memory; bodies are written/fsynced only
+after capture and cleanup, so per-call disk I/O does not perturb captured gaps.
+A process crash loses buffered bodies and leaves an incomplete manifest. Hashing
+and callback CPU overhead still exists and must be disclosed in timing analysis.
+Phases: preparation, active, cleanup. Only active rows may later enter the
+engineering envelope dataset. CT and CA are separately labeled. Exact bodies
+and lengths/digests are checked against a manifest bound into the signed run.
+HTTP exchange elapsed time includes network/TLS/queueing; it is NOT isolated
+server processing and must not be used as measured service time without a
+separate declared conservative timing model. Bodies exclude HTTP headers and
+TLS/IP framing. A fixed body size alone does not establish fixed wire traces.
+
+After collection — mandatory gates before confirmatory evaluation
+1. Retrieve and verify all36 signed successful runs, plus raw PCAP/application
+   manifests and cleanup/host snapshots. Any missing evidence blocks fitting.
+2. Fit using declared fresh TRAIN sessions only; select byte/time budgets on
+   separate VALIDATION sessions; freeze profile and code hashes. These36 runs
+   remain engineering data because their results will be inspected. They are
+   not confirmatory test sessions. Collect additional independently assigned
+   sessions for fit/selection; two batches do not support train/val/test claims.
+3. Implement and qualify actual controller calls through the TLS fixed-cell
+   bridge (current bridge only has local policy fixtures). Confirm independent
+   dataplane effect and rollback; do not infer effectiveness from flow counts.
+4. Raw/padding/envelope paired experiment with equal task semantics, frozen
+   splits, all failures/overflows, per-direction wire bytes and latency, task
+   success/cleanup, attacker controls and uncertainty estimates.
+5. Only then scale protocols, paraphrases, sessions and valid intent semantics.
+   Remaining12 intent classes and management-preserving I01 are unprovisioned.
+
+Prepared does not mean live-validated: macOS tests and local HTTPS doubles
+cannot certify ONOS behavior, EC2 scheduler timing or shaping privacy utility.
+
+Retrieval and inventory commands after completion
+  python3 scripts/overnight_status.py --fetch --fetch-attempts
+Then, using paths under the retrieved outputs/<remote-directory-name>/:
+  .venv/bin/python scripts/inventory_application_collection.py \
+    --input outputs/<remote-directory-name>/batch_001/artifacts \
+    --input outputs/<remote-directory-name>/batch_002/artifacts \
+    --output outputs/application_inventory_verified.json
+The inventory rejects incomplete, altered or duplicate batches; it does not
+silently size a profile from validation/test results. The SSH dependency
+Paramiko5.0.0 has been installed in the project venv (deploy optional extra).

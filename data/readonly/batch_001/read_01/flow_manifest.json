@@ -1,0 +1,15 @@
+{
+  "endpoints": [
+    {
+      "client_ip": "127.0.0.1",
+      "client_port": 49466,
+      "server_ip": "127.0.0.1",
+      "server_port": 40845,
+      "channel": "CA"
+    }
+  ],
+  "capture_interface": "lo on Linux / lo0 on macOS",
+  "representation": "loopback TLS tunnel only; exclude backend HTTPS",
+  "handshake_completed_before_returning_pair": true,
+  "trace_id": "d0d6ea6cff814b04aef5320e8f1eb989"
+}

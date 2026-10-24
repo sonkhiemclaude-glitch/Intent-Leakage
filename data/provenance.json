@@ -1,0 +1,10 @@
+{
+  "analysis_archive_sha256": "1f1a0968916c51a4ba2222019f21d32773dcb8ca45917447ce22451f6816c680",
+  "ablation_archive_sha256": "f37fa7293829b05ed86982d3bc21423115f9f5990bad8d1b401ddc77f37e3eca",
+  "private_original_analysis_archive_sha256": "4054823d21c95a15d2757db4e574b18e6c72e245d140ffb34b048e5bb59ebcbe",
+  "packaging_note": "Original experiment outputs retained byte-for-byte; remote wrappers and nested source bundle excluded from public analysis archive. Operational host inventories and credentials are not part of this dataset.",
+  "matched_rows": 504,
+  "archived_fits": 3276,
+  "ablation_fits": 216,
+  "engineering_runs": 8
+}

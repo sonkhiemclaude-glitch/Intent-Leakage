@@ -1,0 +1,19 @@
+schema_version: 1
+preprocessing:
+  sequence_length_candidates: [64, 128, 256]
+  burst_definition: maximal_consecutive_same_direction
+  turn_definition: direction_transition
+random_forest:
+  n_estimators: [100, 300]
+  max_depth: [null, 12]
+  min_samples_leaf: [1, 3]
+sequence_knn:
+  neighbors: [1, 3, 5]
+  distances: [euclidean, manhattan]
+cnn1d:
+  enabled: false
+  channels: [[16, 32], [32, 64]]
+  kernels: [[5, 3]]
+  learning_rates: [0.001]
+  maximum_epochs: 50
+  early_stopping_patience: 5

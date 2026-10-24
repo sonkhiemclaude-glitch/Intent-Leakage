@@ -1,0 +1,38 @@
+Linux capture entry point (engineering qualification only)
+
+  python scripts/qualify_captured_readonly_bridge.py \
+    --config /private/controller.json \
+    --profile deployment/readonly_bridge/engineering_profile.json \
+    --output /private/new-capture-directory --allow-external
+
+Run only inside the assigned isolated Linux ONOS/Mininet namespace, with
+trusted certificate paths and tcpdump/tshark already available. This command
+does not create that namespace or deploy EC2. Never point it at another project.
+It needs packet-capture privilege within that namespace, not host-wide network
+changes. Parent process must additionally impose an overall execution timeout.
+The capture watchdog bounds tcpdump only; it cannot cancel arbitrary callback I/O.
+
+Before capture, the runner fingerprints controller flow IDs/selectors/treatments/
+priorities/permanence. After the bounded read it compares the same semantic
+baseline, excluding changing counters. Unexpected baseline changes fail the run.
+These baseline GETs are outside the protected tunnel capture. The protected
+call is read-only; this is not a validation of mutation rollback or dataplane.
+
+A broad loopback TCP filter starts BEFORE creating/handshaking the tunnel. The
+returned flow manifest then selects exactly one declared TLS tunnel, excluding
+backend HTTPS. Readiness failure never starts the callback; timeout, nonzero
+exit, missing statistics, nonzero drops, missing record direction or ambiguous
+streams all block successful qualification. Callback exceptions retain capture
+artifacts; their private message strings are not emitted in reports.
+
+Accounting distinguishes:
+- TLS record bytes (5-byte record headers included; retransmission frames excluded).
+- Observed loopback IP bytes and capture-frame bytes in each direction, including
+  handshake, ACK-only packets and captured retransmissions.
+- Scheduled application-cell bytes. These are not substituted for wire bytes.
+No physical-link bandwidth or confidentiality reduction is certified by this
+single engineering run. All failures/PCAPs persist for review with SHA256 hashes.
+Output directories reject overwrite and use private permissions.
+
+Unit/fault tests use fake tcpdump and synthetic packet-accounting rows. Their
+passing does not mean a real Linux/ONOS capture has already been executed.

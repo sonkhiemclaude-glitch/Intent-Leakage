@@ -1,0 +1,20 @@
+# Connection-probe choices only. Not a frozen real-capture manifest.
+schema_version: 1
+run_kind: live_bedrock_connection_smoke
+synthetic: false
+paper_results_claimed: false
+region: us-east-1
+models:
+  A: amazon.nova-micro-v1:0
+  B: openai.gpt-oss-20b-1:0
+credential_env: AWS_BEARER_TOKEN_BEDROCK
+local_private_env_key_alias: Bedrock_key
+max_output_tokens: 32
+temperature: 0.0
+retry_policy:
+  mode: standard
+  total_max_attempts: 1
+connection_pooling: new_client_per_request
+transport_modes_checked: [converse, converse_stream]
+network_capture_performed: false
+controller_actions: 0

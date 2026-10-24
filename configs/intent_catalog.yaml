@@ -1,0 +1,18 @@
+schema_version: 1
+scope_map: {low: 1, medium: 2, high: 4}
+classes:
+  I01: {name: Quarantine compromised endpoints, primary_target: hosts}
+  I02: {name: Release quarantined endpoints, primary_target: hosts}
+  I03: {name: Block communicating endpoint pairs, primary_target: endpoint_pairs}
+  I04: {name: Permit communicating endpoint pairs, primary_target: endpoint_pairs}
+  I05: {name: Rate-limit selected services, primary_target: flows}
+  I06: {name: Raise bandwidth or priority, primary_target: flows}
+  I07: {name: Reroute demands away from a resource, primary_target: demands}
+  I08: {name: Restore default paths, primary_target: demands}
+  I09: {name: Create isolated tenant slices, primary_target: slices}
+  I10: {name: Resize tenant slices, primary_target: slices}
+  I11: {name: Delete tenant slices, primary_target: slices}
+  I12: {name: Onboard tenant services, primary_target: services}
+  I13: {name: Withdraw tenant services, primary_target: services}
+  I14: {name: Redirect selected flows, primary_target: flows}
+  I15: {name: Audit selected policies once, primary_target: policies}

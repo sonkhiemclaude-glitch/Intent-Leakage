@@ -1,0 +1,9 @@
+schema_version: 1
+synthetic: true
+seed: 7
+output: {root: outputs/example, overwrite: true}
+data:
+  classes: [I01, I02, I03, I04, I05, I06, I07, I08, I09, I10, I11, I12, I13, I14, I15]
+  scope_counts: [1, 2, 4]
+  samples_per_cell: 2
+evaluation: {bootstrap_resamples: 20, confidence: 0.90, bootstrap_seed: 8}

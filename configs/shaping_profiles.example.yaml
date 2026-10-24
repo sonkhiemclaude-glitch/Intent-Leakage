@@ -1,0 +1,15 @@
+schema_version: 1
+status: example_only_author_confirmation_required
+profiles:
+  all_classes:
+    group_id: all
+    class_ids: [I01, I02, I03, I04, I05, I06, I07, I08, I09, I10, I11, I12, I13, I14, I15]
+    admitted_scopes: [low, medium, high]
+    round_count: "[TO CONFIRM FROM TRAINING]"
+    period_s: "[TO CONFIRM FROM TRAINING]"
+    termination_offset_s: "[TO CONFIRM FROM TRAINING]"
+    overflow_policy: fail_closed
+    slots: []
+decoys:
+  assurance_query_allowlist: ["[TO CONFIRM SAFE READ-ONLY QUERY]"]
+  state_changing_decoys_permitted: false

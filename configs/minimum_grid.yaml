@@ -1,0 +1,17 @@
+schema_version: 1
+repetitions: "[TO CONFIRM]"
+classes: [I01, I02, I03, I04, I05, I06, I07, I08, I09, I10, I11, I12, I13, I14, I15]
+scope_counts: [1, 2, 4]
+phrase_families:
+  train: phrase_train
+  validation: phrase_validation
+  test: phrase_test
+blocks:
+  core: {topology: TA, model: A, condition: no_shaping, splits: [train, validation, test]}
+  model_transfer: {topology: TA, model: B, condition: no_shaping, splits: [test]}
+  topology_transfer: {topology: TB, model: A, condition: no_shaping, splits: [test]}
+  defense:
+    topology: TA
+    model: A
+    conditions: [no_shaping, fixed_size_padding, all_class_envelope, budgeted_groups]
+    splits: [train, validation, test]

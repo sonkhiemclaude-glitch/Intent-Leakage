@@ -1,0 +1,76 @@
+schema_version: 1
+synthetic: false
+seed: 20261020
+external_execution:
+  enabled: false
+output:
+  root: outputs/real_experiment
+  overwrite: false
+data:
+  root: /ABSOLUTE/PATH/TO/MANUALLY/PROVISIONED/DATA
+  trace_events: traces/events.jsonl
+  run_manifest: manifests/runs.jsonl
+  intent_manifest: manifests/intents.jsonl
+  feature_csv: features/features.csv
+  prediction_csv: results/predictions.csv
+  metrics_csv: results/metrics.csv
+experiment:
+  repetitions: "[TO CONFIRM]"
+  timeout_s: "[TO CONFIRM]"
+  topologies:
+    primary: TA
+    transfer: TB
+  models:
+    primary: "[TO CONFIRM: BEDROCK MODEL ID A]"
+    transfer: "[TO CONFIRM: BEDROCK MODEL ID B]"
+  conditions: [no_shaping, fixed_size_padding, all_class_envelope, budgeted_groups]
+models:
+  A:
+    model_id: "[TO CONFIRM: BEDROCK MODEL ID A]"
+  B:
+    model_id: "[TO CONFIRM: BEDROCK MODEL ID B]"
+  random_forest:
+    feature_columns_by_view:
+      CL: ["[TO CONFIRM: FROZEN CL FEATURE COLUMN]"]
+      CT: ["[TO CONFIRM: FROZEN CT FEATURE COLUMN]"]
+      CA: ["[TO CONFIRM: FROZEN CA FEATURE COLUMN]"]
+      fused: ["[TO CONFIRM: FROZEN FUSED FEATURE COLUMN]"]
+    group_columns: [condition]
+    target_column: class_id
+    scope_column: scope_q
+    split_column: split
+    training_split: train
+    n_estimators: "[TO CONFIRM]"
+    max_depth: "[TO CONFIRM: POSITIVE INTEGER OR null]"
+    min_samples_leaf: "[TO CONFIRM]"
+    class_weight: "[TO CONFIRM: null OR APPROVED VALUE]"
+    scope_class_weight: "[TO CONFIRM: null OR APPROVED VALUE]"
+    random_state: 20261020
+transport:
+  http_version: "[TO CONFIRM]"
+  event_stream: "[TO CONFIRM]"
+  connection_reuse: "[TO CONFIRM]"
+  capture_interfaces: ["[TO CONFIRM]"]
+  capture_filter: "[TO CONFIRM]"
+bedrock:
+  region: "[TO CONFIRM]"
+  decoding_parameters: "[TO CONFIRM]"
+onos:
+  base_url_env: ONOS_BASE_URL
+  username_env: ONOS_USERNAME
+  password_env: ONOS_PASSWORD
+mininet:
+  vm_endpoint_env: MININET_VM_ENDPOINT
+  topology_a: "[TO CONFIRM]"
+  topology_b: "[TO CONFIRM]"
+shaping:
+  profile_file: configs/shaping_profiles.example.yaml
+  fixed_padding_bytes: "[TO CONFIRM FROM TRAINING ONLY]"
+evaluation:
+  prediction_source: calibrated_model
+  evaluation_splits: [test]
+  ablation_source: evaluation_output
+  confidence: "[TO CONFIRM]"
+  bootstrap_resamples: "[TO CONFIRM]"
+  bootstrap_seed: 20261021
+  compliance_thresholds: "[TO CONFIRM]"

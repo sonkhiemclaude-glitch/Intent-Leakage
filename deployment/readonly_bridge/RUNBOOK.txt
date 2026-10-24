@@ -1,0 +1,75 @@
+Read-only HTTPS-to-fixed-cell bridge — 2026-10-22
+
+Implemented path
+Local agent -> mutually authenticated TLS1.3 fixed cells over AF_UNIX or
+explicitly enabled127.0.0.1 TCP -> frozen read-only handler -> HTTPS TLS1.2
+ONOS REST read -> exact original JSON response body -> fragment -> TLS cells
+-> reassembly at agent. No response truncation, reserialization or dynamic
+message/envelope resizing. Dummy cells never invoke the controller.
+
+The default message bound remains65536 bytes for older prototypes. This new
+engineering profile explicitly selects131072 bytes because the qualification
+collection contains68801-byte response bodies. This is an inspected engineering
+choice, not a train/validation-selected formal defense profile.
+
+Checked locally
+Both AF_UNIX and real IPv4 loopback mTLS roundtrip a >64KiB JSON body from a
+local HTTPS API double without changes. One real GET is made despite dummy
+cells; no writes/deletes or owned controller state are created. Duplicate JSON
+keys, mutations, unknown resources, expired context and oversize responses
+fail without retry. Full default suite:282 passed,1 optionalTorch skip.
+Mac Studio regression evidence is tracked in outputs/readonly_bridge_review_20261022.
+HTTPS API doubles do not prove real ONOS or independent dataplane correctness.
+
+Runner (inside an assigned isolated namespace; never point at another project)
+  .venv/bin/python scripts/qualify_readonly_bridge.py \
+    --config /private/path/controller.json \
+    --profile deployment/readonly_bridge/engineering_profile.json \
+    --output /private/path/new-result.json --allow-external
+
+Private controller.json must have exactly these fields:
+  origin: fixed HTTPS ONOS origin (e.g. local isolated TLS proxy)
+  username / password: controller credentials, never copied into public reports
+  ca_file: trusted controller certificate
+  timeout_s: positive socket timeout <=2 seconds
+No config/credential values appear in the result. The result is mode0600,
+refuses overwrite, and initially records incomplete before opening a connection.
+No automatic SSH deployment, Docker creation, model call or EC2 start occurs.
+
+Current engineering profile
+CA;4096-byte application cells;256 rounds;10ms period;128KiB message bound;
+one request per run;100ms cadence abort guard;500ms cell I/O bound.
+Nominal active envelope2.56s, scheduled cells2,097,152 bytes across both
+directions. Those are application-cell bytes, not measured wire bytes.
+100ms guard compliance is not10ms timing accuracy. The profile is deliberately
+not presented as a cost-effective defense. Actual request/reply size, handshake,
+TCP/TLS records, scheduling and end-of-session signals must still be measured.
+
+Important limitations / next Linux qualification
+- Read-only operations only. Local RequestContext.commit is never used to wrap
+  remote controller mutations. Writes require separately journaled ownership,
+  lost-ack reconciliation, independent dataplane verification and rollback.
+- Checks before/after HTTP read gate admission/publication, not cancellation of
+  an in-flight network call. urllib socket timeout is not an absolute exchange
+  deadline; a stalled/late read fails, and may outlive the public envelope.
+- Both transport peers must be co-located and share monotonic clock. TCP mode
+  rejects non-loopback addresses and is disabled unless explicitly requested.
+  No cross-host pacing claim or new externally exposed listening port.
+- The runner creates an ephemeral local TLS pair and fresh disposable certs.
+  Its flow manifest identifies only that tunnel, separately from backend HTTPS.
+  Capture must start before invoking the runner to include the handshake; the
+  returned pair already completed TLS negotiation. Never mix backend HTTPS
+  traffic with shaped-tunnel attacker features.
+- The runner does not itself capture PCAP. A Linux namespace wrapper must start
+  tcpdump with bounded readiness/stop, parse the declared tunnel, check dropped
+  packets, record baseline/after state and verify no unexpected controller writes.
+- Fresh independent training/validation sessions and budget selection remain
+  necessary before holding out confirmatory test sessions. The existing36 runs
+  are engineering data. Do not tune on test overflow or relabel them as formal.
+
+Next work
+Implement the bounded Linux capture wrapper and compare raw read/padding/cells
+with equal task semantics. Verify actual ONOS bodies, exact reassembly, failed
+runs, per-direction wire bytes, latency and baseline preservation. Then qualify
+controller mutation handling separately before any full I01/I02 experiment.
+No additional T4 deployment was performed in this local preparation step.

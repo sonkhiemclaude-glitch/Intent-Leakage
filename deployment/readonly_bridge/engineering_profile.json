@@ -1,0 +1,11 @@
+{
+  "channel": "CA",
+  "cell_bytes": 4096,
+  "rounds": 256,
+  "period_s": 0.01,
+  "max_message_bytes": 131072,
+  "max_pending": 1,
+  "max_messages": 1,
+  "max_lateness_s": 0.1,
+  "io_timeout_s": 0.5
+}
