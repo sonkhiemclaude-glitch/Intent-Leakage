@@ -6,5 +6,14 @@
   "matched_rows": 504,
   "archived_fits": 3276,
   "ablation_fits": 216,
-  "engineering_runs": 8
+  "engineering_runs": 8,
+  "posthoc_extension_archive_sha256": "d8c0be1dad99ee4df2d72c8f921d85be8f84430cfb8f4096dc5b0d00e48efe1a",
+  "posthoc_extension_summary_sha256": "f438e1eb8f26f267b927c853d7607a16e560d6a74980e41664be98294f23139c",
+  "posthoc_extension_model_reload_sha256": "5cc1c5ea4194e91ed881b045e5b360b1931071cd2b26b8f30ee7ce7e17938279",
+  "posthoc_extension_script_sha256": "0e089503fb48f0f0c69e5e2fd15fb865275bed54bb0731507929112c9cdd8593",
+  "posthoc_extension_input_archive_sha256": "1f1a0968916c51a4ba2222019f21d32773dcb8ca45917447ce22451f6816c680",
+  "posthoc_extension_fits": 1010,
+  "posthoc_extension_new_collection_runs": 0,
+  "posthoc_extension_reloaded_loso_models": 252,
+  "posthoc_extension_status": "exploratory_posthoc_same_504_runs"
 }

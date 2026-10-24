@@ -6,7 +6,7 @@ Code and evaluation data for passive operational-intent inference from encrypted
 
 The matched dataset contains **504 runs**: 252 deterministic MCP executions and 252 native Amazon Bedrock Nova Micro executions, three operation labels (I01 quarantine, I02 release, I15 selected-rule audit), target counts 1/2/4, and two small ONOS/Mininet topologies. Each cohort has 14 sessions. Input bundles also retain unmatched collection rows; analyses select the common sessions rather than treating all input rows as matched.
 
-The release includes **3,276 archived RF/kNN/CNN fits**, **216 offline diagnostic fits**, and a separate **eight-read loopback tunnel cohort**. Split repeats overlap and are sensitivity checks, not independent confidence intervals. The code also contains a broader synthetic catalogue and shaping prototypes; their presence does not establish a measured fifteen-class benchmark or live defense efficacy.
+The release includes **3,276 archived RF/kNN/CNN fits**, **216 offline feature-diagnostic fits**, a separate **eight-read loopback tunnel cohort**, and a **1,010-fit post-hoc extension** over the same 504 runs. The extension adds session-complete LOSO predictions, training/observation budgets, fixed classifier families, and blocked-label null checks. It adds no collection sessions, model-service requests, or confirmatory evidence. Split repeats overlap and are sensitivity checks, not independent confidence intervals. The code also contains a broader synthetic catalogue and shaping prototypes; their presence does not establish a measured fifteen-class benchmark or live defense efficacy.
 
 Random-forest mean assurance class balanced accuracy is 90.83% for MCP and 100% for native execution (balanced chance 33.33%). Combined tool/assurance scope balanced accuracy is 91.11% and 95.56%. These are exploratory results on fixed implementations, with exact-intent binding for native execution. There is no measured all-channel privacy guarantee, unrestricted paraphrase generalization, second-model comparison, or paired live defense privacy/cost frontier.
 
@@ -18,7 +18,33 @@ Python 3.11+ is sufficient for integrity and prediction-metric verification; no 
 python3 scripts/verify_results.py
 ```
 
-The verifier checks SHA-256, archived input/model/prediction links, session separation, every stored prediction metric, and engineering data counts. It writes a fresh summary under the ignored `results/` directory. Original `paper_results_claimed=false` fields are retained in archived reports: those reports were exploratory and are not relabeled as confirmatory experiments.
+The verifier checks SHA-256, archived input/model/prediction links, session separation, every stored prediction metric, all 1,010 extension predictions, the 252 saved LOSO model hashes, and engineering data counts. It does not deserialize models or fit classifiers. It writes a fresh summary under the ignored `results/` directory. Archived outputs retain their exploratory status.
+
+## Reproduce the post-hoc extension
+
+The frozen predictions, reports, protocol, and LOSO estimators are in `data/posthoc_extension_results.tar.gz`; the independently recomputed summary is `data/posthoc_extension_summary.json`. To refit the extension from the released classifier inputs, install the project dependencies, then run:
+
+```bash
+python scripts/extend_paper_evaluation.py \
+  --archive data/analysis_results.tar.gz \
+  --output results/posthoc_extension_refit \
+  --cpus 2 --permutations 199 --store-oof-models
+python scripts/summarize_extended_evaluation.py \
+  --evaluation results/posthoc_extension_refit \
+  --archive data/analysis_results.tar.gz \
+  --engineering data/engineering_runs.json \
+  --output results/posthoc_extension_summary.json --reload-models
+python scripts/plot_publication_figures.py \
+  --summary results/posthoc_extension_summary.json \
+  --evaluation results/posthoc_extension_refit \
+  --archive data/analysis_results.tar.gz \
+  --ablation-archive data/ablation_results.tar.gz \
+  --engineering data/engineering_runs.json \
+  --engineering-captures data/readonly \
+  --figure-dir results/posthoc_figures
+```
+
+The archived output preserves the exact published predictions. Refitting is exploratory and may not reproduce model bytes across library versions or hardware. The 95% ranges condition on the fixed LOSO fold models and resample the available sessions; they do not represent independent infrastructure replication.
 
 ## Install and test the implementation
 
@@ -51,6 +77,8 @@ The forest and neighbor splits hold sessions out. CNN additionally separates val
 
 - `data/analysis_results.tar.gz`: classifier input bundles, frozen reports, predictions and fitted artifacts. Remote launch wrappers and old nested source bundles are excluded; research artifact bytes are unchanged.
 - `data/ablation_results.tar.gz`: count/size/timing/full-feature and offline record-length-equalization diagnostics, including stored models and predictions.
+- `data/posthoc_extension_results.tar.gz`: 1,010 stored post-hoc fits, predictions, protocol/checksum records, and LOSO model artifacts; all use the same matched 504-run corpus.
+- `data/posthoc_extension_summary.json` and `data/posthoc_extension_model_reload.json`: independent metric recomputation and exact prediction-match receipt for reloaded LOSO models.
 - `data/readonly/`: eight broad loopback PCAPs, selected-tunnel endpoint manifests and normalized visible TLS records. Use each flow manifest to exclude the unshaped backend connection.
 - `data/engineering_runs.json`: body/IP accounting and 4,096 application-cell lateness observations from eight related transactions. The fixed active envelope is 2.56 seconds; this is not complete intent latency or a bandwidth-overhead baseline.
 - `data/provenance.json` and `data/SHA256SUMS.txt`: packaging provenance and dataset integrity checks.
