@@ -46,6 +46,29 @@ python scripts/plot_publication_figures.py \
 
 The archived output preserves the exact published predictions. Refitting is exploratory and may not reproduce model bytes across library versions or hardware. The 95% ranges condition on the fixed LOSO fold models and resample the available sessions; they do not represent independent infrastructure replication.
 
+## Aggregate revision supplement
+
+`data/reviewer_summary.json` adds aggregate results for 12 count-only depth-two trees on one existing split and inference-only transfer of 12 saved forests to 36 separate archived direct-driver runs. It also reports class-level capacity statistics for 244 HTTP exchanges, four scheduler-condition summaries from eight local synthetic-handler cases (1,536 sender writes), successful-cohort accounting, and aggregate capture-replay outcomes. The destination executions were previously inspected and share the original infrastructure; they are not prospective validation. New execution was bounded smoke work, with no collection or cloud requests.
+
+**This additional release contains only code and aggregate statistics.** Individual feature rows, predictions, run/session identifiers, trace sequences, per-exchange body observations, sender-write observations, endpoint manifests and additional PCAPs are not included. The existing release described above is separate from this supplement.
+
+```bash
+python3 scripts/verify_reviewer_summary.py
+# Requires matplotlib and numpy; outputs stay under the ignored results directory.
+python scripts/plot_reviewer_summary.py --output results/reviewer_summary_figures
+```
+
+The summary verifier checks SHA-256, recomputes balanced accuracy and macro-F1 from 24 confusion matrices, and checks count/quantile consistency. It does **not** independently reproduce private feature extraction, stored-model inference or raw scheduler quantiles. The plotter generates count-baseline, transfer and aggregate engineering plots. The body-capacity plot uses class maxima; private exchange-level ECDFs and individual trace timelines cannot be reconstructed from this supplement.
+
+`scripts/reviewer_smoke.py` contains the bounded diagnostic procedure. It can regenerate detailed local smoke outputs from the previously released analysis and read-only inputs; generated files are not automatically published:
+
+```bash
+python scripts/reviewer_smoke.py --archive data/analysis_results.tar.gz \
+  --readonly data/readonly --output results/reviewer_smoke --tshark tshark
+```
+
+`scripts/summarize_reviewer_results.py` documents the explicit field allowlist used to build the public summary. It requires the locally held detailed smoke and archived-transfer output folders, which are not supplied by this supplement. Aggregate arithmetic verification is therefore distinct from full raw-data reproduction. No manuscript or figure PDFs are included in this release.
+
 ## Install and test the implementation
 
 ```bash
@@ -81,6 +104,7 @@ The forest and neighbor splits hold sessions out. CNN additionally separates val
 - `data/posthoc_extension_summary.json` and `data/posthoc_extension_model_reload.json`: independent metric recomputation and exact prediction-match receipt for reloaded LOSO models.
 - `data/readonly/`: eight broad loopback PCAPs, selected-tunnel endpoint manifests and normalized visible TLS records. Use each flow manifest to exclude the unshaped backend connection.
 - `data/engineering_runs.json`: body/IP accounting and 4,096 application-cell lateness observations from eight related transactions. The fixed active envelope is 2.56 seconds; this is not complete intent latency or a bandwidth-overhead baseline.
+- `data/reviewer_summary.json`: aggregate-only revision diagnostics, confusion matrices, capacity/scheduler summaries and limitations.
 - `data/provenance.json` and `data/SHA256SUMS.txt`: packaging provenance and dataset integrity checks.
 
 Attack inputs include record-size/timing sequences and aggregate features. Raw attack-corpus PCAPs, machine-access records, infrastructure inventories and private operational logs are not included. Engineering PCAPs contain isolated emulated loopback traffic. The local original artifacts remain separate from this curated public dataset.
